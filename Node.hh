@@ -6,7 +6,6 @@
 
 #include "INode.hh"
 
-
 namespace AST {
 
 	class Scope final : public IScope{
@@ -14,20 +13,37 @@ namespace AST {
 		
 		IScope* parent_; //< Pointer to parent scope
 
-		var_table_t var_table; //< var table
+		var_table_t var_table_; //< var table
 
 	public:
 		Scope(IScope* parent) : parent_(parent) {}
 
-		IScope* reset_scope() override;
+		int32_t calculate() { return 0; }
 
-		int32_t calculate() override;
+		IScope* reset_scope() override { return parent_; }
 
-		void push(INode_ptr& node) override;
+		void push(const INode_ptr& node) override;
 		
-		~Scope() override;
+		iter_bool get_var(const std::string& name) override;
+		bool check_var(const std::string& var_name) override;
+		iter_bool insert(const std::string& var_name) override;
+		//iter_bool check_location(const std::string& var_name) override;
+	public:
+		~Scope() override {};
+
+	private:
+		var_table_t::iterator insert_var(const std::string& var_name);
 	};
 
+
+	class Const_Node final : public INode {
+		const int32_t value_;
+
+	public:
+		Const_Node(int32_t val) : value_(val) {}
+
+		int32_t calculate() override { return value_; } ;
+	};
 
 	/// @brief Class varible node
 	class Var_Node final : INode{
@@ -38,11 +54,11 @@ namespace AST {
 
 		std::string get_name() const { return position_->first; }
 
-		int32_t calculate() override;
+		int32_t calculate() override { return position_->second; }
 
 		var_table_t::iterator get_position() const { return position_; }
 
-		void set_value(int32_t val);
+		void set_value(int32_t val) { position_->second = val; }
 	};
 
 
@@ -60,14 +76,14 @@ namespace AST {
 	};
 
 
-	class Assign_Node final : INode {
+	class Assign_Node final : public INode {
 		using VNode_ptr = std::shared_ptr<Var_Node>;
 		
 		VNode_ptr destination_; //var to assign
 		INode_ptr expression_; 
 
 	public:
-		Assign_Node(VNode_ptr& dest, INode_ptr& expr) : destination_(dest), expression_(expr) {}
+		Assign_Node(const VNode_ptr& dest, const INode_ptr& expr) : destination_(dest), expression_(expr) {}
 
 		int32_t calculate() override;
 	};
@@ -87,10 +103,10 @@ namespace AST {
 	class If_Node final : public INode {
 		INode_ptr condition_;
 		IScope_ptr if_scope_;
-
+		IScope_ptr else_scope_;
 
 	public:
-		If_Node(INode_ptr& cond, IScope_ptr& if_sc) : condition_(cond), if_scope_(if_sc) {}
+		If_Node(INode_ptr& cond, IScope_ptr& if_sc, IScope_ptr el_sc = nullptr) : condition_(cond), if_scope_(if_sc), else_scope_{ el_sc } {}
 
 		int32_t calculate() override;
 	};

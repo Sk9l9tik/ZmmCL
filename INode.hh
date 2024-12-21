@@ -13,13 +13,17 @@ namespace AST {
 	using INode_ptr = std::shared_ptr<INode>;
 	using IScope_ptr = std::shared_ptr<IScope>;
 
+	//	using make_iscope_ptr = std::make_shared<IScope>()
+
 	using var_table_t = std::unordered_map<std::string, int>; //< int replace to table members
 
+	using iter_bool = std::pair<var_table_t::iterator, bool>;
+	
+	IScope* cur_scope = 0;;
 
 	/// Node interface
 	class INode {
 	public:
-
 		virtual int calculate() = 0;
 
 		virtual ~INode() = default;
@@ -29,10 +33,16 @@ namespace AST {
 	class IScope : public INode{
 	public:
 
-		virtual void push(INode_ptr& node) = 0;
+		virtual void push(const INode_ptr& node) = 0;
+
+		int32_t calculate() = 0;
 
 		virtual IScope* reset_scope() = 0;
 
+		virtual iter_bool get_var(const std::string& var_name) = 0;
+		virtual bool check_var(const std::string& var_name) = 0;
+		virtual iter_bool insert(const std::string& var_name) = 0;
+		virtual iter_bool check_location(const std::string& var_name) = 0;
 	};
 
 	/**
@@ -44,6 +54,7 @@ namespace AST {
 
 		ADD,
 		SUB,
+		DIV,
 		MUL,
 		MOD,
 		
@@ -81,7 +92,7 @@ namespace AST {
 	* @param[in] rhs shared ptr to Right node Operator_t
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_operator(INode_ptr& lhs, Operator_t op, INode_ptr& rhs);
+	INode_ptr make_operator(const INode_ptr& lhs, Operator_t op, const INode_ptr& rhs);
 
 	/**
 	* @brief Make if node function
@@ -89,7 +100,16 @@ namespace AST {
 	* @param[in] isc shared ptr to if scope
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_if(INode_ptr& cond, IScope_ptr& isc);
+	INode_ptr make_if(const INode_ptr& cond, const IScope_ptr& isc);
+
+	/**
+	* @brief Make if-else node function
+	* @param[in] cond shared ptr to condition node
+	* @param[in] isc shared ptr to if scope
+	* @param[in] esc shared ptr to else scope
+	* @return shared ptr to created Node
+	*/
+	INode_ptr make_if_else(const INode_ptr& cond, const IScope_ptr& isc, const IScope_ptr& esc);
 
 	/**
 	* @brief Make if else node function
@@ -98,7 +118,7 @@ namespace AST {
 	* @param[in] wsc shared ptr to else scope
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_if_else(INode_ptr& cond, IScope_ptr& isc, IScope_ptr& esc);
+	INode_ptr make_if_else(const INode_ptr& cond, const IScope_ptr& isc, const IScope_ptr& esc);
 
 	/**
 	* @brief Make while node function
@@ -106,22 +126,22 @@ namespace AST {
 	* @param[in] wsc shared ptr to while scope
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_while(INode_ptr& cond, IScope_ptr& wsc);
+	INode_ptr make_while(const INode_ptr& cond, const IScope_ptr& wsc);
 
 	/**
 	* @brief Make assigment node function
-	* @param[in] var_name name of variable to assign
+	* @param[in] var name of variable to assign
 	* @param[in] expr shared ptr to expressiont to assign
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_assign(std::string& var_name, INode_ptr& expr);
+	INode_ptr make_assign(std::string& var, const const INode_ptr& expr);
 
 	/**
 	* @brief Make print node function
 	* @param[in] expr shared ptr to expressiont to print
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_print(INode_ptr& expr);
+	INode_ptr make_print(const INode_ptr& expr);
 
 	/**
 	* @brief Make scan node function

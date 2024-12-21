@@ -6,10 +6,10 @@ message("------------ Project files genertion for ${proj_name} ------------")
 
 
 # Включение горячей перезагрузки для компиляторов MSVC, если поддерживается.
-if (POLICY CMP0141)
-  cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
-endif()
+#if (POLICY CMP0141)
+#  cmake_policy(SET CMP0141 NEW)
+#  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+#endif()
 
 #common options
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -26,11 +26,13 @@ set(CMAKE_CXX_STANDART 20)
 
 #app options
 set(INC
+        #"AST.h"
         "INode.hh"
         "Node.hh"
 )
 
 set(SRC
+        "AST.cpp"
         "Node.cc"
 )
 

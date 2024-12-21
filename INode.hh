@@ -5,26 +5,25 @@
 
 namespace AST {
 
-
+	//pre class defenition
 	class INode;
 	class IScope;
 
 
 	using INode_ptr = std::shared_ptr<INode>;
 	using IScope_ptr = std::shared_ptr<IScope>;
+	using var_table_t = std::unordered_map<std::string, int>; //< int replace to table members
+	using iter_bool = std::pair<var_table_t::iterator, bool>;
 
 	//	using make_iscope_ptr = std::make_shared<IScope>()
 
-	using var_table_t = std::unordered_map<std::string, int>; //< int replace to table members
-
-	using iter_bool = std::pair<var_table_t::iterator, bool>;
 	
 	IScope* cur_scope = 0;;
 
 	/// Node interface
 	class INode {
 	public:
-		virtual int calculate() = 0;
+		virtual int calculate() = 0; //<calculate function
 
 		virtual ~INode() = default;
 	};
@@ -33,7 +32,7 @@ namespace AST {
 	class IScope : public INode{
 	public:
 
-		virtual void push(const INode_ptr& node) = 0;
+		virtual void push(const INode_ptr& node) = 0;//< push to stack
 
 		int32_t calculate() = 0;
 
@@ -66,8 +65,8 @@ namespace AST {
 		NEQ, // Not equal
 
 		AND,
-		OR,
-		NOT
+		OR
+		//NOT
 	};
 
 
@@ -118,7 +117,7 @@ namespace AST {
 	* @param[in] wsc shared ptr to else scope
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_if_else(const INode_ptr& cond, const IScope_ptr& isc, const IScope_ptr& esc);
+	INode_ptr make_if_else(const INode_ptr& cond, const IScope_ptr& isc, const IScope_ptr& esc = nullptr);
 
 	/**
 	* @brief Make while node function

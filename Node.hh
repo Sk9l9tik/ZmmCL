@@ -35,7 +35,10 @@ namespace AST {
 		var_table_t::iterator insert_var(const std::string& var_name);
 	};
 
-
+	/**
+	* @class Const_Node
+	* @brief class to constant value
+	*/
 	class Const_Node final : public INode {
 		const int32_t value_;
 
@@ -45,7 +48,11 @@ namespace AST {
 		int32_t calculate() override { return value_; } ;
 	};
 
-	/// @brief Class varible node
+
+	/**
+	* @class Var_Node
+	* @brief Class varible node
+	*/
 	class Var_Node final : INode{
 		var_table_t::iterator position_;
 
@@ -61,12 +68,15 @@ namespace AST {
 		void set_value(int32_t val) { position_->second = val; }
 	};
 
-
+	/**
+	* @class Operator_Node
+	* @brief Class operators Node
+	*/
 	class Operator_Node final : public INode{
-		INode_ptr left_;
-		INode_ptr right_;
+		INode_ptr left_; //< left operand
+		INode_ptr right_; //< right operand
 
-		Operator_t operator_type_;
+		Operator_t operator_type_; //< operator type
 
 	public:
 		Operator_Node(INode_ptr& lhs, Operator_t op_type, INode_ptr& rhs)
@@ -75,12 +85,15 @@ namespace AST {
 		int32_t calculate() override;
 	};
 
-
+	/**
+	* @class Assign_Node
+	* @brief Class assign node
+	*/
 	class Assign_Node final : public INode {
 		using VNode_ptr = std::shared_ptr<Var_Node>;
 		
-		VNode_ptr destination_; //var to assign
-		INode_ptr expression_; 
+		VNode_ptr destination_; //< var to assign
+		INode_ptr expression_; //< 
 
 	public:
 		Assign_Node(const VNode_ptr& dest, const INode_ptr& expr) : destination_(dest), expression_(expr) {}
@@ -88,10 +101,13 @@ namespace AST {
 		int32_t calculate() override;
 	};
 
-
+	/**
+	* @class While_Node
+	* @brief Class while cycle node
+	*/
 	class While_Node final : public INode{
-		INode_ptr condition_;
-		IScope_ptr scope_;
+		INode_ptr condition_; //< cycle condition
+		IScope_ptr scope_;	//< cucle scope
 
 	public:
 		While_Node(INode_ptr& cond, IScope_ptr& scope) : condition_(cond), scope_(scope) {}
@@ -99,11 +115,14 @@ namespace AST {
 		int32_t calculate() override;
 	};
 
-
+	/**
+	* @class If_Node
+	* @brief Class if condition node
+	*/
 	class If_Node final : public INode {
-		INode_ptr condition_;
-		IScope_ptr if_scope_;
-		IScope_ptr else_scope_;
+		INode_ptr condition_; //< if condition
+		IScope_ptr if_scope_; //< if scope
+		IScope_ptr else_scope_; //< else scope optionally
 
 	public:
 		If_Node(INode_ptr& cond, IScope_ptr& if_sc, IScope_ptr el_sc = nullptr) : condition_(cond), if_scope_(if_sc), else_scope_{ el_sc } {}
@@ -111,9 +130,12 @@ namespace AST {
 		int32_t calculate() override;
 	};
 
-
+	/**
+	* @class Print_Node
+	* @brief Class print node
+	*/
 	class Print_Node final : public INode {
-		INode_ptr expression_;
+		INode_ptr expression_; //< prnit expression
 
 	public:
 		Print_Node(INode_ptr& expr) : expression_(expr) {}
@@ -121,7 +143,10 @@ namespace AST {
 		int32_t calculate() override;
 	};
 
-
+	/**
+	* @class Scan_Node
+	* @brief Class scan node
+	*/
 	class Scan_Node final : public INode {
 	public:
 		Scan_Node() = default;

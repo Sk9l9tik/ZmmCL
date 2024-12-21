@@ -17,7 +17,7 @@ namespace AST {
 		return std::make_shared<If_Node>(cond, isc);
 	}
 
-	INode_ptr make_if_else(const INode_ptr& cond, const IScope_ptr& isc, const IScope_ptr& esc) {
+	INode_ptr make_if_else(const INode_ptr& cond, const IScope_ptr& isc, const IScope_ptr& esc = nullptr) {
 		return std::make_shared<If_Node>(cond, isc);
 	}
 
@@ -58,12 +58,13 @@ namespace AST {
 
 	iter_bool Scope::get_var(const std::string& var_name) {
 
-		iter_bool it_b = check_location(var_name);
+		iter_bool it_b = check_location(var_name); //< check var in var_table
 
 		if (it_b.second) {
 			return it_b;
 		}
 	
+		return it_b;
 		//if not ??
 	}
 
@@ -77,8 +78,8 @@ namespace AST {
 
 	iter_bool Scope::insert(const std::string& var_name) {
 		//if(check_var(var_name)) it need?
-		iter_bool it_b = get_var(var_name);
-		if(it_b.second)
+		iter_bool it_b = get_var(var_name); 
+		if(it_b.second) // check valid var
 			it_b.first = insert_var(var_name);
 		return it_b;
 	}

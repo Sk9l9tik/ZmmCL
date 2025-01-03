@@ -94,6 +94,13 @@ namespace AST {
 	INode_ptr make_operator(const INode_ptr& lhs, Operator_t op, const INode_ptr& rhs);
 
 	/**
+	* @brief Make unary Operator_t node function
+	* @param[in] op Operator_t type
+	* @param[in] rhs shared ptr to Right node Operator_t
+	* @return shared ptr to created Node
+	*/
+	INode_ptr make_unary_operator(Operator_t op, const INode_ptr& rhs;)
+	/**
 	* @brief Make if node function
 	* @param[in] cond shared ptr to condition node
 	* @param[in] isc shared ptr to if scope

@@ -1,6 +1,8 @@
 #include "Node.hh"
+#include <memory>
 
 namespace AST {
+	
 	IScope_ptr make_scope(IScope* par) {
 		return std::make_shared<Scope>(par);
 	}
@@ -11,6 +13,10 @@ namespace AST {
 
 	INode_ptr make_operator(const INode_ptr& lhs, Operator_t op, const INode_ptr& rhs) {
 		return std::make_shared<Operator_Node>(lhs,op,rhs);
+	}
+
+	INode_ptr make_unary_operator(Operator_t op, const INode_ptr& rhs){
+		return std::make_shared<Unary_Operator_Node>(op, rhs);
 	}
 
 	INode_ptr make_if(const INode_ptr& cond, const IScope_ptr& isc) {
@@ -46,15 +52,6 @@ namespace AST {
 		iter_bool iter = var_table_.emplace(var_name, 0);
 		return iter.first;
 	}
-
-	/*iter_bool Scope::check_location(const std::string& var_name) {
-		iter_bool it_b;
-
-		it_b.first = var_table_.find(var_name);
-		it_b.second = var_table_.end() != it_b.first;
-
-		return it_b;
-	}*/
 
 	iter_bool Scope::get_var(const std::string& var_name) {
 
@@ -124,6 +121,21 @@ namespace AST {
 		}
 	}
 
+	int32_t Unary_Operator_Node::calculate(){
+		auto value = operand_->calculate();
+		
+		switch(operator_type_){
+			case Operator_t::NEG:
+				return -value;
+				break;
+			case Operator_t::NOT:
+				return std::static_cast<int>(!std::static_cast<bool>(value));
+				break;
+			default:
+				throw std::runtime_error("Unknown operator!\n");
+		}
+	}
+
 	int32_t Assign_Node::calculate() {
 		auto expr = expression_->calculate();
 		destination_->set_value(expr);
@@ -144,12 +156,12 @@ namespace AST {
 			throw std::runtime_error("Invalid value int stdin!\n");
 		return value;
 	}
-	int32_t While_Node::calculate()
-	{
+
+	int32_t While_Node::calculate(){
 		return 0;
 	}
-	int32_t If_Node::calculate()
-	{
+
+	int32_t If_Node::calculate(){
 		return 0;
 	}
 }

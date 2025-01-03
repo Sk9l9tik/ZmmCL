@@ -86,6 +86,21 @@ namespace AST {
 	};
 
 	/**
+	* @class Unary_Operator_Node
+	* @brief Class unary operators Node
+	*/
+	class Unary_Operator_Node final : public INode{
+		INode_ptr operand_;
+
+		Operator_t operator_type_;
+	
+	public:
+		Unary_Operator_Node(Operator_t Operator_t op_type, INode_ptr& rhs) : operand_(operandl), operator_type_(op_type){}
+
+		int32_t calculate() override;
+	}
+
+	/**
 	* @class Assign_Node
 	* @brief Class assign node
 	*/

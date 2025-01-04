@@ -65,8 +65,8 @@ namespace AST {
 		NEQ, // Not equal
 
 		AND,
-		OR
-		//NOT
+		OR,
+		NOT
 	};
 
 

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 namespace AST {
 
@@ -18,7 +19,6 @@ namespace AST {
 	//	using make_iscope_ptr = std::make_shared<IScope>()
 
 	
-	IScope* cur_scope = 0;;
 
 	/// Node interface
 	class INode {
@@ -66,6 +66,8 @@ namespace AST {
 
 		AND,
 		OR,
+		
+		NEG,
 		NOT
 	};
 
@@ -99,7 +101,7 @@ namespace AST {
 	* @param[in] rhs shared ptr to Right node Operator_t
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_unary_operator(Operator_t op, const INode_ptr& rhs;)
+	INode_ptr make_unary(Operator_t op, const INode_ptr& rhs);
 	/**
 	* @brief Make if node function
 	* @param[in] cond shared ptr to condition node
@@ -140,7 +142,7 @@ namespace AST {
 	* @param[in] expr shared ptr to expressiont to assign
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_assign(std::string& var, const const INode_ptr& expr);
+	INode_ptr make_assign(std::string& var, const INode_ptr& expr);
 
 	/**
 	* @brief Make print node function
@@ -153,6 +155,14 @@ namespace AST {
 	* @brief Make scan node function
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_scan();
+	INode_ptr make_input();
+
+	/**
+	* @brief Make reference node
+	* @return shared ptr to created Var_node
+	*/
+	INode_ptr make_reference(const std::string& var_name);
 
 }
+
+extern AST::IScope* CURRENT_SCOPE;

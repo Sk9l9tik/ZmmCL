@@ -27,7 +27,7 @@ namespace AST {
 		iter_bool get_var(const std::string& name) override;
 		bool check_var(const std::string& var_name) override;
 		iter_bool insert(const std::string& var_name) override;
-		//iter_bool check_location(const std::string& var_name) override;
+		iter_bool check_location(const std::string& var_name) override;
 	public:
 		~Scope() override {};
 
@@ -95,10 +95,10 @@ namespace AST {
 		Operator_t operator_type_;
 	
 	public:
-		Unary_Operator_Node(Operator_t Operator_t op_type, INode_ptr& rhs) : operand_(operandl), operator_type_(op_type){}
+		Unary_Operator_Node(Operator_t op_type, INode_ptr& operand) : operand_(operand), operator_type_(op_type){}
 
 		int32_t calculate() override;
-	}
+	};
 
 	/**
 	* @class Assign_Node
@@ -162,9 +162,9 @@ namespace AST {
 	* @class Scan_Node
 	* @brief Class scan node
 	*/
-	class Scan_Node final : public INode {
+	class Input_Node final : public INode {
 	public:
-		Scan_Node() = default;
+		Input_Node() = default;
 
 		int32_t calculate() override;
 	};

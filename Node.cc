@@ -15,7 +15,7 @@ namespace AST {
 		return std::make_shared<Operator_Node>(lhs,op,rhs);
 	}
 
-	INode_ptr make_unary_operator(Operator_t op, const INode_ptr& rhs){
+	INode_ptr make_unary(Operator_t op, const INode_ptr& rhs){
 		return std::make_shared<Unary_Operator_Node>(op, rhs);
 	}
 
@@ -32,7 +32,7 @@ namespace AST {
 	}
 
 	INode_ptr make_assign(std::string& var_name, const INode_ptr& expr) {
-		auto iter = cur_scope->insert(var_name);
+		auto iter = CURRENT_SCOPE->insert(var_name);
 		auto var_ptr = std::make_shared<Var_Node>(iter);
 		
 		return std::make_shared<Assign_Node>(var_ptr, expr);
@@ -42,10 +42,18 @@ namespace AST {
 		return std::make_shared<Print_Node>(expr);
 	}
 
-	INode_ptr make_scan() {
-		return std::make_shared<Scan_Node>();
+	INode_ptr make_input() {
+		return std::make_shared<Input_Node>();
 	}
-
+	
+	INode_ptr make_reference(const std::string& var_name){
+		auto it_b = CURRENT_SCOPE->get_var(var_name);
+		if(!it_b.second){
+			std::string wt = "Uncknown variable '" + var_name + "'";
+			throw std::runtime_error{wt};
+		}
+		return std::make_shared<Var_Node>(it_b.first);
+	}
 
 
 	var_table_t::iterator Scope::insert_var(const std::string& var_name) {
@@ -67,6 +75,15 @@ namespace AST {
 
 	void Scope::push(const INode_ptr& node) {
 		nodes_.push_back(node);
+	}
+
+	Scope::iter_bool Scope::check_location(const std::string &var_name){
+		iter_bool it_b{};
+
+		it_b.first = var_table_.find(var_name);
+		it_b.second = (var_table_.end() != it_b.first);
+
+		return it_b;
 	}
 
 	bool Scope::check_var(const std::string& var_name) {
@@ -129,7 +146,7 @@ namespace AST {
 				return -value;
 				break;
 			case Operator_t::NOT:
-				return std::static_cast<int>(!std::static_cast<bool>(value));
+				return static_cast<int>(!static_cast<bool>(value));
 				break;
 			default:
 				throw std::runtime_error("Unknown operator!\n");

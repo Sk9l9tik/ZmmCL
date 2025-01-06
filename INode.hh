@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
+#include <iterator>
 
 namespace AST {
 
@@ -18,18 +19,18 @@ namespace AST {
 
 	//	using make_iscope_ptr = std::make_shared<IScope>()
 
-	
-
 	/// Node interface
 	class INode {
 	public:
+		explicit INode() = default;
+
 		virtual int calculate() = 0; //<calculate function
 
 		virtual ~INode() = default;
 	};
 
 	/// Scope interface
-	class IScope : public INode{
+	class IScope : public INode {
 	public:
 
 		virtual void push(const INode_ptr& node) = 0;//< push to stack
@@ -56,7 +57,7 @@ namespace AST {
 		DIV,
 		MUL,
 		MOD,
-		
+
 		GREATER,
 		LESS,
 		GR_EQ, // Greater than or equal
@@ -66,7 +67,7 @@ namespace AST {
 
 		AND,
 		OR,
-		
+
 		NEG,
 		NOT
 	};
@@ -109,15 +110,6 @@ namespace AST {
 	* @return shared ptr to created Node
 	*/
 	INode_ptr make_if(const INode_ptr& cond, const IScope_ptr& isc);
-
-	/**
-	* @brief Make if-else node function
-	* @param[in] cond shared ptr to condition node
-	* @param[in] isc shared ptr to if scope
-	* @param[in] esc shared ptr to else scope
-	* @return shared ptr to created Node
-	*/
-	INode_ptr make_if_else(const INode_ptr& cond, const IScope_ptr& isc, const IScope_ptr& esc);
 
 	/**
 	* @brief Make if else node function

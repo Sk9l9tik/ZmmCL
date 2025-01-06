@@ -1,8 +1,9 @@
+
+#include "INode.hh"
 #include "Node.hh"
-#include <memory>
 
 namespace AST {
-	
+
 	IScope_ptr make_scope(IScope* par) {
 		return std::make_shared<Scope>(par);
 	}
@@ -12,10 +13,10 @@ namespace AST {
 	}
 
 	INode_ptr make_operator(const INode_ptr& lhs, Operator_t op, const INode_ptr& rhs) {
-		return std::make_shared<Operator_Node>(lhs,op,rhs);
+		return std::make_shared<Operator_Node>(lhs, op, rhs);
 	}
 
-	INode_ptr make_unary(Operator_t op, const INode_ptr& rhs){
+	INode_ptr make_unary(Operator_t op, const INode_ptr& rhs) {
 		return std::make_shared<Unary_Operator_Node>(op, rhs);
 	}
 
@@ -23,7 +24,7 @@ namespace AST {
 		return std::make_shared<If_Node>(cond, isc);
 	}
 
-	INode_ptr make_if_else(const INode_ptr& cond, const IScope_ptr& isc, const IScope_ptr& esc = nullptr) {
+	INode_ptr make_if_else(const INode_ptr& cond, const IScope_ptr& isc, const IScope_ptr& esc) {
 		return std::make_shared<If_Node>(cond, isc);
 	}
 
@@ -34,7 +35,7 @@ namespace AST {
 	INode_ptr make_assign(std::string& var_name, const INode_ptr& expr) {
 		auto iter = CURRENT_SCOPE->insert(var_name);
 		auto var_ptr = std::make_shared<Var_Node>(iter);
-		
+
 		return std::make_shared<Assign_Node>(var_ptr, expr);
 	}
 
@@ -45,13 +46,14 @@ namespace AST {
 	INode_ptr make_input() {
 		return std::make_shared<Input_Node>();
 	}
-	
-	INode_ptr make_reference(const std::string& var_name){
-		auto it_b = CURRENT_SCOPE->get_var(var_name);
-		if(!it_b.second){
-			std::string wt = "Uncknown variable '" + var_name + "'";
-			throw std::runtime_error{wt};
+
+	INode_ptr make_reference(const std::string& var_name) {
+		iter_bool it_b = CURRENT_SCOPE->get_var(var_name);
+		if (!it_b.second) {
+			std::string wt = "Unknown variable '" + var_name + "'";
+			throw std::runtime_error{ wt };
 		}
+
 		return std::make_shared<Var_Node>(it_b.first);
 	}
 
@@ -68,7 +70,7 @@ namespace AST {
 		if (it_b.second) {
 			return it_b;
 		}
-	
+
 		return it_b;
 		//if not ??
 	}
@@ -77,7 +79,7 @@ namespace AST {
 		nodes_.push_back(node);
 	}
 
-	Scope::iter_bool Scope::check_location(const std::string &var_name){
+	iter_bool Scope::check_location(const std::string& var_name) {
 		iter_bool it_b{};
 
 		it_b.first = var_table_.find(var_name);
@@ -92,8 +94,8 @@ namespace AST {
 
 	iter_bool Scope::insert(const std::string& var_name) {
 		//if(check_var(var_name)) it need?
-		iter_bool it_b = get_var(var_name); 
-		if(it_b.second) // check valid var
+		iter_bool it_b = get_var(var_name);
+		if (it_b.second) // check valid var
 			it_b.first = insert_var(var_name);
 		return it_b;
 	}
@@ -138,18 +140,18 @@ namespace AST {
 		}
 	}
 
-	int32_t Unary_Operator_Node::calculate(){
+	int32_t Unary_Operator_Node::calculate() {
 		auto value = operand_->calculate();
-		
-		switch(operator_type_){
-			case Operator_t::NEG:
-				return -value;
-				break;
-			case Operator_t::NOT:
-				return static_cast<int>(!static_cast<bool>(value));
-				break;
-			default:
-				throw std::runtime_error("Unknown operator!\n");
+
+		switch (operator_type_) {
+		case Operator_t::NEG:
+			return -value;
+			break;
+		case Operator_t::NOT:
+			return static_cast<int>(!static_cast<bool>(value));
+			break;
+		default:
+			throw std::runtime_error("Unknown operator!\n");
 		}
 	}
 
@@ -165,7 +167,7 @@ namespace AST {
 		std::cout << expr << '\n';
 	}
 
-	int32_t Scan_Node::calculate() {
+	int32_t Input_Node::calculate() {
 		int32_t value;
 
 		std::cin >> value;
@@ -174,11 +176,11 @@ namespace AST {
 		return value;
 	}
 
-	int32_t While_Node::calculate(){
+	int32_t While_Node::calculate() {
 		return 0;
 	}
 
-	int32_t If_Node::calculate(){
+	int32_t If_Node::calculate() {
 		return 0;
 	}
 }

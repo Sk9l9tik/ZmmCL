@@ -3,6 +3,7 @@
 #include "Node.hh"
 
 namespace AST {
+	//IScope* CURRENT_SCOPE; << DEFINE IT IN driver.cc		!!!!! remove this line
 
 	IScope_ptr make_scope(IScope* par) {
 		return std::make_shared<Scope>(par);
@@ -34,7 +35,7 @@ namespace AST {
 
 	INode_ptr make_assign(std::string& var_name, const INode_ptr& expr) {
 		auto iter = CURRENT_SCOPE->insert(var_name);
-		auto var_ptr = std::make_shared<Var_Node>(iter);
+		auto var_ptr = std::make_shared<Var_Node>(iter.first);
 
 		return std::make_shared<Assign_Node>(var_ptr, expr);
 	}
@@ -132,9 +133,9 @@ namespace AST {
 		case Operator_t::NEQ:
 			return static_cast<int>(lhs != rhs);
 		case Operator_t::AND:
-			return static_cast<int>(lhs && rhs);
+			return static_cast<int>(static_cast<bool>(lhs) && static_cast<bool>(rhs));
 		case Operator_t::OR:
-			return static_cast<int>(lhs || rhs);
+			return static_cast<int>(static_cast<bool>(lhs) || static_cast<bool>(rhs));
 		default:
 			throw std::runtime_error("Unknown operator!\n");
 		}
@@ -165,6 +166,7 @@ namespace AST {
 		auto expr = expression_->calculate();
 
 		std::cout << expr << '\n';
+		return 0;
 	}
 
 	int32_t Input_Node::calculate() {
@@ -177,10 +179,16 @@ namespace AST {
 	}
 
 	int32_t While_Node::calculate() {
+		while (condition_->calculate())
+			scope_->calculate();
 		return 0;
 	}
 
 	int32_t If_Node::calculate() {
+		if (condition_)
+			if_scope_->calculate();
+		else if (!else_scope_)
+			else_scope_->calculate();
 		return 0;
 	}
 }

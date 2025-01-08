@@ -10,6 +10,7 @@
 namespace AST {
 
 	class Scope final : public IScope {
+		friend IScope_ptr make_scope(IScope* par);
 
 		std::vector<INode_ptr> nodes_; //< Vector of nodes in curent scope
 
@@ -18,9 +19,10 @@ namespace AST {
 		var_table_t var_table_; //< var table
 
 	public:
+		//Scope() { parent_ = nullptr; }
 		explicit Scope(IScope* parent) : parent_(parent) {}
 
-		int32_t calculate() { return 0; }
+		int32_t calculate() { for (auto&& node : nodes_) node->calculate(); return 0; }
 
 		IScope* reset_scope() override { return parent_; }
 
@@ -28,13 +30,14 @@ namespace AST {
 
 		iter_bool get_var(const std::string& name) override;
 		bool check_var(const std::string& var_name) override;
-		iter_bool insert(const std::string& var_name) override;
+		var_table_iterator insert(const std::string& var_name) override;
 		iter_bool check_location(const std::string& var_name) override;
+
 	public:
 		~Scope() override {};
 
 	private:
-		var_table_t::iterator insert_var(const std::string& var_name);
+		var_table_iterator insert_var(const std::string& var_name);
 	};
 
 	/**
@@ -42,7 +45,7 @@ namespace AST {
 	* @brief class to constant value
 	*/
 	class Const_Node final : public INode {
-		const int32_t value_;
+		const int32_t value_;	//< Node value
 
 	public:
 		explicit Const_Node(int32_t val) : value_(val) {}
@@ -57,16 +60,16 @@ namespace AST {
 	*/
 class Var_Node final : public INode {
     private:
-        var_table_t::iterator position_;
+        var_table_iterator position_;	//< position in var table
 
     public:
-        Var_Node(const var_table_t::iterator& pos) : position_(pos) {}
+        Var_Node(const var_table_iterator& pos) : position_(pos) {}
 
         std::string get_name() const { return position_->first; }
 
         int32_t calculate() override { return position_->second; }
 
-        var_table_t::iterator get_position() const { return position_; }
+        var_table_iterator get_position() const { return position_; }
 
         void set_value(int32_t val) { position_->second = val; }
     };
@@ -79,9 +82,9 @@ class Var_Node final : public INode {
 	*/
 	class Operator_Node final : public INode {
 	private:
-		INode_ptr left_;
-		INode_ptr right_;
-		Operator_t operator_type_;
+		INode_ptr left_;	//< left operand 
+		INode_ptr right_;	//< right operand
+		Operator_t operator_type_;	//< operator
 
 	public:
 		Operator_Node(const INode_ptr& lhs, Operator_t op_type, const INode_ptr& rhs)
@@ -96,8 +99,8 @@ class Var_Node final : public INode {
 	*/
 	class Unary_Operator_Node final : public INode {
 	private:
-		INode_ptr operand_;
-		Operator_t operator_type_;
+		INode_ptr operand_;	//< main operand
+		Operator_t operator_type_;	//<operator
 
 	public:
 		Unary_Operator_Node(Operator_t op_type, const INode_ptr& operand)
@@ -114,7 +117,7 @@ class Var_Node final : public INode {
 		using VNode_ptr = std::shared_ptr<Var_Node>;
 
 		VNode_ptr destination_; //< var to assign
-		INode_ptr expression_; //< 
+		INode_ptr expression_;	//< exptression what assigned
 
 	public:
 		explicit Assign_Node(const VNode_ptr& dest, const INode_ptr& expr) : destination_(dest), expression_(expr) {}
@@ -128,8 +131,8 @@ class Var_Node final : public INode {
 	*/
 	class While_Node final : public INode {
 	private:
-		INode_ptr condition_;
-		IScope_ptr scope_;
+		INode_ptr condition_;	//< cycle condition
+		IScope_ptr scope_;		//< cycle scope
 
 	public:
 		While_Node(const INode_ptr& cond, const IScope_ptr& scope)
@@ -144,12 +147,12 @@ class Var_Node final : public INode {
 	*/
 	class If_Node final : public INode {
 	private:
-		INode_ptr condition_;
-		IScope_ptr if_scope_;
-		IScope_ptr else_scope_;
+		INode_ptr condition_;	//< if condition
+		IScope_ptr if_scope_;	//< if scope
+		IScope_ptr else_scope_;	//else scope
 
 	public:
-		If_Node(const INode_ptr& cond, const IScope_ptr& if_sc, const IScope_ptr& el_sc = nullptr)
+		If_Node(const INode_ptr& cond, const IScope_ptr& if_sc, IScope_ptr el_sc = nullptr)
 			: condition_(cond), if_scope_(if_sc), else_scope_(el_sc) {}
 
 		int32_t calculate() override;

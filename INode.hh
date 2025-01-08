@@ -16,8 +16,7 @@ namespace AST {
 	using IScope_ptr = std::shared_ptr<IScope>;
 	using var_table_t = std::unordered_map<std::string, int>; //< int replace to table members
 	using iter_bool = std::pair<var_table_t::iterator, bool>;
-
-	//	using make_iscope_ptr = std::make_shared<IScope>()
+	using var_table_iterator = var_table_t::iterator;
 
 	/// Node interface
 	class INode {
@@ -41,9 +40,12 @@ namespace AST {
 
 		virtual iter_bool get_var(const std::string& var_name) = 0;
 		virtual bool check_var(const std::string& var_name) = 0;
-		virtual iter_bool insert(const std::string& var_name) = 0;
+		virtual var_table_iterator insert(const std::string& var_name) = 0;
 		virtual iter_bool check_location(const std::string& var_name) = 0;
 	};
+
+	// Pre class defenition
+	class Scope;
 
 	/**
 	* @enum Operator_t
@@ -52,7 +54,7 @@ namespace AST {
 	enum class Operator_t {
 		ASSIGN,
 
-		ADD,
+		ADD,	
 		SUB,
 		DIV,
 		MUL,
@@ -60,10 +62,10 @@ namespace AST {
 
 		GREATER,
 		LESS,
-		GR_EQ, // Greater than or equal
-		LS_EQ, // Less than or equal 
-		EQ,	// Eqaul
-		NEQ, // Not equal
+		GR_EQ,	//< Greater than or equal
+		LS_EQ,	//< Less than or equal 
+		EQ,		//< Eqaul
+		NEQ,	//< Not equal
 
 		AND,
 		OR,
@@ -102,7 +104,7 @@ namespace AST {
 	* @param[in] rhs shared ptr to Right node Operator_t
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_unary(Operator_t op, const INode_ptr& rhs);
+	INode_ptr make_unary_operator(Operator_t op, const INode_ptr& rhs);
 	/**
 	* @brief Make if node function
 	* @param[in] cond shared ptr to condition node
@@ -134,7 +136,7 @@ namespace AST {
 	* @param[in] expr shared ptr to expressiont to assign
 	* @return shared ptr to created Node
 	*/
-	INode_ptr make_assign(std::string& var, const INode_ptr& expr);
+	INode_ptr make_assign(const std::string& var, const INode_ptr& expr);
 
 	/**
 	* @brief Make print node function

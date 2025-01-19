@@ -1,0 +1,5 @@
+x = 42;
+y = 52
+
+print x;
+//CHECK_INTERP:syntax error, unexpected PRINT in line 4

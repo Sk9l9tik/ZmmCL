@@ -1,0 +1,4 @@
+x = 0;
+input x;
+print x;
+//CHECK_INTERP:Invalid value int stdin!

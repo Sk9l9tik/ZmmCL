@@ -1,0 +1,7 @@
+if (0)
+	print 55;
+else{
+	 if (1) {
+		print 42;
+	}
+}

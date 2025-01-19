@@ -1,0 +1,10 @@
+x = 42;
+
+/*some comment**/
+
+/*moore 
+	lines 
+comment
+*/
+
+print x; //CHECK_INTEERP: 42

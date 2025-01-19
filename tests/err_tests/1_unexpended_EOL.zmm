@@ -1,0 +1,2 @@
+x = 42
+//CHECK_INTERP:syntax error, unexpected end of file in line 2

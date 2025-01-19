@@ -1,0 +1,6 @@
+a = 52;
+
+x = 0;
+
+print a % x;
+//CHECK_INTEPR:Divide by zero!

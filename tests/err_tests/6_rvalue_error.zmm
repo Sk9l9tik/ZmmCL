@@ -1,0 +1,4 @@
+x = 2;
+
+5 = x;
+//CHCEK_INTERP: syntax error, unexpected ASSIGN in line 3

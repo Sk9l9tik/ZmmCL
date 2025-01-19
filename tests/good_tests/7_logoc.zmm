@@ -1,0 +1,9 @@
+print 2 > 3; //CHECK-INTERP: 0
+print 3 < 5; //CHECK-INTERP: 1
+print 1 == 1; //CHECK-INTERP: 1
+print 6 <= 6; //CHECK-INTERP: 1
+print 7 >= 7; //CHECK-INTERP: 1
+
+print 0 || 1; //CHECK_INTERP: 1 
+print 1 && 1; //CHECK-INTERP: 1
+

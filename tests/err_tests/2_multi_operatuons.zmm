@@ -1,0 +1,4 @@
+a = 4 + + 2;
+
+print a;
+//CHECK_INTERP: syntax error, unexpected ADD in line 1

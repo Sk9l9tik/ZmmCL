@@ -1,0 +1,15 @@
+x = 1;
+
+z = x * /*
+
+
+dfkdfdjfkldjkfad
+*/ 
+42;
+
+y = y /*
+adsads
+*/ + + x;
+
+print y;
+//CHECK_INTERP: syntax error, unexpected ADD in line 12

@@ -1,0 +1,5 @@
+a = 1;
+x = 5 +a;
+
+if(x)
+	print x; //CHECK_INTER: 6

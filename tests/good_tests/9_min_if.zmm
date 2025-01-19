@@ -1,0 +1,10 @@
+if (0)
+	print 55; //CHECK_INTERP_NOT: 55
+else if (1){
+	if (0)
+		print 322; //CHECK_INTERP_NOT: 322
+	else if (1)
+		print 42; //CHECK_INTERP: 42
+}
+else
+	print 12; //CHECK_INTERP_NOT:12
